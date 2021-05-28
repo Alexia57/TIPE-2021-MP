@@ -6,12 +6,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+
+# Initialisation de l'affichage
 pygame.init()
 clock = pygame.time.Clock()
 
 resolutionEcran = (600,600)
 FPS = 60
-greenColor = (50,255,50)
+greenColor = (50,210,50)
 redColor = (255,50,50)
 greyColor = (100,100,100)
 whiteColor = (230,230,230)
@@ -20,13 +22,14 @@ blueColor = (80, 150, 255)
 arialFontFPS = pygame.font.SysFont("arial", 15)
 pygame.display.set_caption("TIPE")
 
+
+# Initialisation des paramètres du modèle
 NombreDIndividus = 300
 NombreMaladeInit = 1
 dureeInfectionMin = 600
 dureeInfectionMax = 1000
 ProbaInfectionContact = 0.2
 TauxMortalite = 0.1
-
 
 NbS = NombreDIndividus - NombreMaladeInit
 NbI = NombreMaladeInit
@@ -38,6 +41,7 @@ listeGeneral = []
 dictBalles = {}
 dictBallesMortes = {}
 
+# fonction qui retourne la somme de 2 vecteurs
 def sommeVect(angle1, taille1, angle2, taille2):
     dx = math.sin(angle1)*taille1 + math.sin(angle2)*taille2
     dy = math.cos(angle1)*taille1 + math.cos(angle2)*taille2
@@ -45,9 +49,11 @@ def sommeVect(angle1, taille1, angle2, taille2):
     angle = math.atan2(dx, dy)
     return (angle,taille,dx,dy)
 
+# fonction qui retourne le p.s. de 2 vecteurs
 def produitScalaire(angle1, taille1, angle2, taille2):
     return taille2*taille1*math.cos(angle1-angle2)
 
+# Classe Balle qui représente un individu
 class Balle(pygame.sprite.Sprite):
 	global dictBalles, ProbaInfectionContact, dureeInfection, NbS, NbI, NbR
 	def __init__(self, x, y, idballe, dateFinInfection = 0, vaMourir = False, masse = 1, rayon = 15, vitesse = 0, angle = 0, couleur = greenColor):
@@ -69,9 +75,9 @@ class Balle(pygame.sprite.Sprite):
 	    pygame.draw.circle(self.surface, couleur, [self.rayon,self.rayon], self.rayon)
 	    self.mask = pygame.mask.from_surface(self.surface)
 	    self.rect = self.surface.get_rect()
-
+	# Rebond sur le contour
 	def rebondContour(self):
-	    if pygame.sprite.collide_mask(self, contour) and selectedBalle != self:
+	    if pygame.sprite.collide_mask(self, contour):
 	        offx = int(self.x)
 	        offy = int(self.y)
 	        dx = contour.mask.overlap_area(self.mask, (offx+1,offy)) - contour.mask.overlap_area(self.mask, (offx-1,offy))
@@ -89,15 +95,15 @@ class Balle(pygame.sprite.Sprite):
 	            angleN = math.atan2(dx,dy)
 	            nb = contour.mask.overlap_area(self.mask, (offx,offy))
 	            
-	            self.x -= math.sin(angleN)*(nb/40)#(math.sin(self.angle)*self.vitesse/1.8)*60/FPS
-	            self.y -= math.cos(angleN)*(nb/40)#(math.cos(self.angle)*self.vitesse/1.8)*60/FPS
+	            self.x -= math.sin(angleN)*(nb/40)
+	            self.y -= math.cos(angleN)*(nb/40)
 	            
 	            self.vitesse = self.vitesse
 	            return True
 	        return False
 	    return False
-        
-	@staticmethod
+    # Rebond entre les balles
+	@staticmethod # méthode propre à la classe entière, pas associée à une Balles
 	def collision(dictBalles):
 		global NbS, NbI
 
@@ -105,6 +111,7 @@ class Balle(pygame.sprite.Sprite):
 		for couple in enumerate(dictBalles):
 			couplesballes.append(couple)
 
+		# On parcourt tous les couples de balles
 		for i in range(len(couplesballes)):
 			for j in range(i+1,len(couplesballes)):
 				b1 = dictBalles[couplesballes[i][1]]
@@ -112,7 +119,9 @@ class Balle(pygame.sprite.Sprite):
 				dx = b1.x + b1.rayon - b2.x - b2.rayon
 				dy = b1.y + b1.rayon - b2.y - b2.rayon
 				distance = math.hypot(dx, dy)
+				# On test si le couple de balle (b1,b2) se touche
 				if distance < b1.rayon + b2.rayon:
+					# traitement de la collision
 				    angleNormal = math.atan2(dx,dy)
 				    masseTotale = b1.masse + b2.masse
 				    v1nTaille = produitScalaire(b1.angle, b1.vitesse, angleNormal, 1)
@@ -130,15 +139,18 @@ class Balle(pygame.sprite.Sprite):
 				    b1.y += math.cos(angleNormal)*depassement
 				    b2.x -= math.sin(angleNormal)*depassement
 				    b2.y -= math.cos(angleNormal)*depassement
-
+				    # fin de traitement de la collision
+				    # traitement de la transmission de la maladie
 				    if start:
 				        if b1.sain and b2.contagieux:
 				        	if random.random() < ProbaInfectionContact:
 				        		NbS -= 1
 				        		NbI += 1
+				        		# changement de couleur de b1
 				        		b1.surface = pygame.Surface((b1.rayon*2, b1.rayon*2),pygame.SRCALPHA)
 				        		pygame.draw.circle(b1.surface, redColor, [b1.rayon,b1.rayon], b1.rayon)
 				        		b1.mask = pygame.mask.from_surface(b1.surface)
+				        		# fin changement de couleur de b1
 				        		b1.contagieux = True
 				        		b1.sain = False
 				        		b1.dateFinInfection = random.randint(dureeInfectionMin,dureeInfectionMax)
@@ -148,15 +160,17 @@ class Balle(pygame.sprite.Sprite):
 				        	if random.random() < ProbaInfectionContact:
 				        		NbS -= 1
 				        		NbI += 1
+				        		# changement de couleur de b2
 				        		b2.surface = pygame.Surface((b2.rayon*2, b2.rayon*2),pygame.SRCALPHA)
 				        		pygame.draw.circle(b2.surface, redColor, [b2.rayon,b2.rayon], b2.rayon)
 				        		b2.mask = pygame.mask.from_surface(b2.surface)
+				        		# fin changement de couleur de b2
 				        		b2.contagieux = True
 				        		b2.sain = False
 				        		b2.dateFinInfection = random.randint(dureeInfectionMin,dureeInfectionMax)
 				        		if random.random() < TauxMortalite:
 				        			b2.vaMourir = True
-
+	# deplacement des balles et mise a jour de l'etat de la balle
 	def move(self):
 		global NbS, NbI, NbR, NbM
 		self.rebondContour()
@@ -165,14 +179,16 @@ class Balle(pygame.sprite.Sprite):
 		self.x += dx*60/FPS
 		self.y += dy*60/FPS
 		## maladie
-		if not self.sain and self.contagieux:
+		if not self.sain and self.contagieux: # on incremente de temps passé malade
 			self.dureeInfection += 1
+		# on regarde si la balle est à la fin de sa maladie
 		if self.dureeInfection > self.dateFinInfection:
 			self.dureeInfection = 0
 			self.contagieux = False
+			# on regarde si la balle va mourir à la fin de sa maladie
 			if self.vaMourir:
 				self.surface = pygame.Surface((self.rayon*2, self.rayon*2),pygame.SRCALPHA)
-				pygame.draw.circle(self.surface, whiteColor, [self.rayon,self.rayon], self.rayon)
+				pygame.draw.circle(self.surface, blackColor, [self.rayon,self.rayon], self.rayon)
 				self.mask = pygame.mask.from_surface(self.surface)
 				dictBallesMortes[self.id] = self
 				NbI -= 1
@@ -186,7 +202,7 @@ class Balle(pygame.sprite.Sprite):
 				NbR += 1
 		return False
 
-
+	# affichage 
 	def draw(self, surface):
 	    if math.hypot(self.x - resolutionEcran[0]/2, self.y - resolutionEcran[1]/2) > 2000:
 	        self.x = resolutionEcran[0]/2
@@ -194,7 +210,7 @@ class Balle(pygame.sprite.Sprite):
 	    self.rect = pygame.Rect(self.x, self.y, self.rayon*2, self.rayon*2)
 	    surface.blit(self.surface, [self.x,self.y])
 
-
+# Classe bordure
 class Bordure(pygame.sprite.Sprite):
     def __init__(self):
         super(Bordure, self).__init__()
@@ -218,6 +234,7 @@ class Bordure(pygame.sprite.Sprite):
         surface.blit(self.surface, [0, 0])
 
 
+# Initialisation de la creation/placement des balles
 for k in range(1,NombreDIndividus+1):
 	x = random.random()*(resolutionEcran[0]-60)+30
 	y = random.random()*(resolutionEcran[1]-60)+30
@@ -239,38 +256,18 @@ contour = Bordure()
 
 windowSurface = pygame.display.set_mode(resolutionEcran, pygame.RESIZABLE)
 
-def findBalle(x, y):
-	for idb in dictBalles:
-		b = dictBalles[idb]
-		if math.hypot(b.x-x + b.rayon, b.y-y + b.rayon) <= b.rayon:
-		    return b
-	return None
 
 
-selectedBalle = None
 running = True
 start = False
 end = False
 affiche = False
+# Boucle principale
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        elif event.type == pygame.VIDEORESIZE:
-            resolutionEcran = event.size
-            contour.reload()
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            (mousex, mousey) = pygame.mouse.get_pos()
-            selectedBalle = findBalle(mousex,mousey)
-        elif event.type == pygame.MOUSEBUTTONUP:
-            selectedBalle = None
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_s:
-                energieCinetique = 0
-                for idb in dictBalles:
-                	b = dictBalles[idb]
-                	energieCinetique += (b.masse*b.vitesse**2)/2
-                print("Energie cinétique du système : ",energieCinetique)
             if event.key == pygame.K_RETURN and not start:
             	print("Start !")
             	start = True
@@ -279,12 +276,6 @@ while running:
             	end = True
             	affiche = True
 
-    if selectedBalle:
-        (mousex, mousey) = pygame.mouse.get_pos()
-        dx = mousex - selectedBalle.x - selectedBalle.rayon
-        dy = mousey - selectedBalle.y - selectedBalle.rayon
-        selectedBalle.angle = math.atan2(dx,dy)
-        selectedBalle.vitesse = math.hypot(dx,dy)/5
 
     if start and not end:
     	listeGeneral.append([t, NbS, NbI, NbR, NbM])
@@ -300,7 +291,7 @@ while running:
 
     Balle.collision(dictBalles)
 
-    windowSurface.fill(blackColor)
+    windowSurface.fill(whiteColor)
 
     for idb in dictBallesMortes:
     	b = dictBallesMortes[idb]
@@ -313,10 +304,7 @@ while running:
     
 
     contour.draw(windowSurface)
-
-    windowSurface.blit(arialFontFPS.render(f"{int(clock.get_fps())} FPS", True, blueColor), [5, 5])
     pygame.display.flip()
-
     clock.tick(FPS)
 
     if affiche:
