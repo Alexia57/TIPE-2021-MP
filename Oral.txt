@@ -1,0 +1,54 @@
+https://maths.ac-creteil.fr/IMG/pdf/5_modele_sir.pdf 
+1 Qu’est ce qu’un modèle ?
+Pour étudier une situation réelle, on commence par extraire de la situation ses caractéristiques principales. Les hypothèses et simplifications faites permettent
+alors de décrire la situation mathématiquement : on a créé un modèle. On substitue ainsi au monde réel le monde « idéal » (et simplificateur) des
+mathématiques. Ensuite on utilise des techniques mathématiques connues pour analyser, étudier le modèle. Les conclusions obtenues sont ensuite retraduites
+dans le langage du monde réel. Par définition un modèle est faux, puisqu’incomplet et imparfait. Par confrontation à l’expérience et au réel les modèles peuvent
+être affinés.
+2
+Pourquoi chercher à expliquer a posteriori ?
+Encore une fois pour mieux comprendre le phénomène et pouvoir agir dans le futur si on se retrouve dans une situation similaire où le modèle semble pouvoir
+être appliqué. 
+
+Pour le modèle « S.I.R. » les règles retenues sont les suivantes :
+ La maladie est une maladie assez brève : on néglige les phénomènes démographiques (naissances, décès,
+immigration). La taille de la population étudiée peut donc être considérée comme fixe.
+ La seule façon pour qu’un individu quitte le groupe des sains est en devenant infecté. Il est raisonnable de
+penser que le nombre de nouveaux cas sur une durée donnée est proportionnel au nombre de contacts sur
+cette durée entre les individus susceptibles et les individus infectés (S(t) × I(t)). On note ce coefficient de
+proportionnalité β.
+ Les personnes malades (infectés) sont toutes infectieuses : elles peuvent transmettre la maladie.
+ Chaque personne qui a guéri de cette maladie est immunisée pour toujours contre cette maladie : la
+personne ne peut plus retomber malade.
+ Nous faisons aussi l’hypothèse que toutes les personnes tombées malades finissent par guérir (ou mourir,
+selon la maladie, mais on ne fera pas la différence ici : dans les deux cas les individus ne peuvent plus
+retomber malade). Ainsi qu’une proportion γ des individus infectés passe dans le groupe des individus
+rétablis tous les jours. Par exemple si la durée moyenne d’infection est de λ = 4 jours, en moyenne chaque
+jour γ = 1/4 de la population infectée se rétablit (ou meurt). 
+
+Vocabulaire :
+- β est appelé taux de transmission
+- λ est la durée moyenne d’infection
+- γ est appelé taux de guérison, il est égal à l’inverse de λ 
+
+Le nombre β λ correspond donc à un seuil : au-delà de 1 il va y avoir une épidémie, en-dessous c’est impossible.
+On le note R0 et on l’appelle le taux de reproduction de base. 
+Etant le produit du taux de transmission β et de la durée moyenne d’infection λ, on peut interpréter R0 comme le
+nombre moyen de nouveaux cas d'infection, engendrés par un individu infecté moyen (au court de la période où il est
+infectieux et donc contaminant), dans une population entièrement considérée comme susceptible.
+Depuis son introduction le taux de reproduction de base R0 s’est imposé comme un concept-clef en épidémiologie
+« Théorème du seuil » (KERMACK & McKENDRICK, 1927):
+Il ne peut y avoir épidémie que si l'effectif des sujets réceptifs est au-dessus du seuil
+Une première remarque simple
+
+Comment atténuer l’intensité d’une épidémie ?
+R0 = β × λ donc R0 diminue lorsque β diminue et/ou lorsque λ diminue.
+Comment diminuer la probabilité d’infection β ?
+ Par exemple en mettant en place des mesures d’hygiène (lavage régulier des mains…) ou de limitation de
+contacts entre les individus (fermetures d’écoles…)
+Comment diminuer le temps moyen d’infection λ ?
+ C’est possible par exemple si on a un traitement qui va faire guérir l’individu infecté plus rapidement.
+
+La vaccination & l’ « immunité de groupe »
+
+D’autres modèles ?   
