@@ -1,5 +1,7 @@
 https://maths.ac-creteil.fr/IMG/pdf/5_modele_sir.pdf 
-
+Dans un premier temps, un modèle sert à représenter la réalité sous un format simplifié pour comprendre les principaux mécanismes en jeu.
+Les modèles peuvent être complexifiés pour mieux représenter la réalité en introduisant par exemple plusieurs catégories de personnes sensibles 
+suivant l’âge, différents symptômes, des populations ayant des comportements différents, ou une dimension spatiale. 
 1 Qu’est ce qu’un modèle ?
 Pour étudier une situation réelle telle que l'évolutiton d'une épidémie, on commence par extraire de la situation ses caractéristiques principales. Les hypothèses et simplifications faites permettent
 alors de décrire la situation mathématiquement : on a créé un modèle. Ensuite on utilise des techniques mathématiques connues pour analyser, étudier le modèle. Les conclusions obtenues sont ensuite retraduites
@@ -63,3 +65,5 @@ Comment diminuer le temps moyen d’infection λ ?
 9 La vaccination & l’ « immunité de groupe »
 
 D’autres modèles ?   
+
+Pour la COVID-19, la transmission se fait dans la population et potentiellement par des personnes asymptomatiques. Il sera donc beaucoup plus difficile de contenir l’épidémie de COVID-19.
