@@ -14,25 +14,35 @@ clock = pygame.time.Clock()
 resolutionEcran = (600,600)
 FPS = 60
 greenColor = (50,210,50)
-redColor = (255,50,50)
+redColor = (200,10,10)
 greyColor = (100,100,100)
 whiteColor = (230,230,230)
 blackColor = (0, 0, 0)
 blueColor = (80, 150, 255)
+orangeColor =(255,90,10)
 arialFontFPS = pygame.font.SysFont("arial", 15)
 pygame.display.set_caption("TIPE")
 
 
 # Initialisation des paramètres du modèle
 NombreDIndividus = 300
-NombreMaladeInit = 1
+NombreMaladeInit_E = 0
+NombreMaladeInit_I = 1
 dureeInfectionMin = 600
 dureeInfectionMax = 1000
+dureeIncubationMin = 100
+dureeIncubationMax = 200
 ProbaInfectionContact = 0.2
 TauxMortalite = 0.1
 
-NbS = NombreDIndividus - NombreMaladeInit
-NbI = NombreMaladeInit
+vacc = False
+TauxVacc = 0.0005
+
+NbCumuleInfecte = 0
+
+NbS = NombreDIndividus - NombreMaladeInit_E - NombreMaladeInit_I
+NbE = NombreMaladeInit_E
+NbI = NombreMaladeInit_I
 NbR = 0
 NbM = 0
 t = 0
@@ -56,15 +66,18 @@ def produitScalaire(angle1, taille1, angle2, taille2):
 # Classe Balle qui représente un individu
 class Balle(pygame.sprite.Sprite):
 	global dictBalles, ProbaInfectionContact, dureeInfection, NbS, NbI, NbR
-	def __init__(self, x, y, idballe, dateFinInfection = 0, vaMourir = False, masse = 1, rayon = 15, vitesse = 0, angle = 0, couleur = greenColor):
+	def __init__(self, x, y, idballe, dateFinInfection = 0, dateFinIncubation=0 , vaMourir = False, masse = 1, rayon = 15, vitesse = 0, angle = 0, couleur = greenColor):
 	    super(Balle, self).__init__()
 	    dictBalles[idballe] = self
 	    self.id = idballe
 	    self.sain = True
+	    self.invincible = False
 	    self.contagieux = False
 	    self.dureeInfection = 0
 	    self.dateFinInfection = dateFinInfection
 	    self.vaMourir = vaMourir
+	    self.dateFinIncubation = dateFinIncubation
+	    self.scoreInfection = 0
 	    self.masse = masse
 	    self.rayon = rayon
 	    self.x = x
@@ -105,7 +118,7 @@ class Balle(pygame.sprite.Sprite):
     # Rebond entre les balles
 	@staticmethod # méthode propre à la classe entière, pas associée à une Balles
 	def collision(dictBalles):
-		global NbS, NbI
+		global NbS, NbE, NbI, NbCumuleInfecte
 
 		couplesballes = []
 		for couple in enumerate(dictBalles):
@@ -144,62 +157,83 @@ class Balle(pygame.sprite.Sprite):
 				    if start:
 				        if b1.sain and b2.contagieux:
 				        	if random.random() < ProbaInfectionContact:
+				        		b2.scoreInfection += 1
 				        		NbS -= 1
-				        		NbI += 1
+				        		NbE += 1
 				        		# changement de couleur de b1
 				        		b1.surface = pygame.Surface((b1.rayon*2, b1.rayon*2),pygame.SRCALPHA)
-				        		pygame.draw.circle(b1.surface, redColor, [b1.rayon,b1.rayon], b1.rayon)
+				        		pygame.draw.circle(b1.surface, orangeColor, [b1.rayon,b1.rayon], b1.rayon)
 				        		b1.mask = pygame.mask.from_surface(b1.surface)
 				        		# fin changement de couleur de b1
-				        		b1.contagieux = True
 				        		b1.sain = False
+				        		b1.dateFinIncubation = random.randint(dureeIncubationMin,dureeIncubationMax)
 				        		b1.dateFinInfection = random.randint(dureeInfectionMin,dureeInfectionMax)
 				        		if random.random() < TauxMortalite:
 				        			b1.vaMourir = True
 				        elif b2.sain and b1.contagieux:
 				        	if random.random() < ProbaInfectionContact:
+				        		b1.scoreInfection += 1
 				        		NbS -= 1
-				        		NbI += 1
+				        		NbE += 1
 				        		# changement de couleur de b2
 				        		b2.surface = pygame.Surface((b2.rayon*2, b2.rayon*2),pygame.SRCALPHA)
-				        		pygame.draw.circle(b2.surface, redColor, [b2.rayon,b2.rayon], b2.rayon)
+				        		pygame.draw.circle(b2.surface, orangeColor, [b2.rayon,b2.rayon], b2.rayon)
 				        		b2.mask = pygame.mask.from_surface(b2.surface)
 				        		# fin changement de couleur de b2
-				        		b2.contagieux = True
 				        		b2.sain = False
+				        		b2.dateFinIncubation = random.randint(dureeIncubationMin,dureeIncubationMax)
 				        		b2.dateFinInfection = random.randint(dureeInfectionMin,dureeInfectionMax)
 				        		if random.random() < TauxMortalite:
 				        			b2.vaMourir = True
 	# deplacement des balles et mise a jour de l'etat de la balle
 	def move(self):
-		global NbS, NbI, NbR, NbM
+		global NbS, NbE, NbI, NbR, NbM, TauxVacc, vacc
 		self.rebondContour()
 		dx = math.sin(self.angle)*self.vitesse
 		dy = math.cos(self.angle)*self.vitesse
 		self.x += dx*60/FPS
 		self.y += dy*60/FPS
+		## vaccination
+		if vacc:
+			if self.sain:
+				if random.random() < TauxVacc:
+					NbS-=1
+					NbR+=1
+					self.surface = pygame.Surface((self.rayon*2, self.rayon*2),pygame.SRCALPHA)
+					pygame.draw.circle(self.surface, blueColor, [self.rayon,self.rayon], self.rayon)
+					self.mask = pygame.mask.from_surface(self.surface)
+					self.invincible = True
+					self.sain = False
 		## maladie
-		if not self.sain and self.contagieux: # on incremente de temps passé malade
+		if not self.sain and not self.invincible: # on incremente de temps passé malade
 			self.dureeInfection += 1
-		# on regarde si la balle est à la fin de sa maladie
-		if self.dureeInfection > self.dateFinInfection:
-			self.dureeInfection = 0
-			self.contagieux = False
-			# on regarde si la balle va mourir à la fin de sa maladie
-			if self.vaMourir:
+			# on regarde si la balle est à la fin de l'incubation / maladie
+			if self.dureeInfection == self.dateFinIncubation:
+				NbE-=1
+				NbI+=1
+				self.contagieux = True
 				self.surface = pygame.Surface((self.rayon*2, self.rayon*2),pygame.SRCALPHA)
-				pygame.draw.circle(self.surface, blackColor, [self.rayon,self.rayon], self.rayon)
+				pygame.draw.circle(self.surface, redColor, [self.rayon,self.rayon], self.rayon)
 				self.mask = pygame.mask.from_surface(self.surface)
-				dictBallesMortes[self.id] = self
-				NbI -= 1
-				NbM += 1
-				return self.id
-			else:
-				self.surface = pygame.Surface((self.rayon*2, self.rayon*2),pygame.SRCALPHA)
-				pygame.draw.circle(self.surface, greyColor, [self.rayon,self.rayon], self.rayon)
-				self.mask = pygame.mask.from_surface(self.surface)
-				NbI -= 1
-				NbR += 1
+			elif self.dureeInfection > self.dateFinInfection:
+				self.dureeInfection = 0
+				self.contagieux = False
+				# on regarde si la balle va mourir à la fin de sa maladie
+				if self.vaMourir:
+					self.surface = pygame.Surface((self.rayon*2, self.rayon*2),pygame.SRCALPHA)
+					pygame.draw.circle(self.surface, blackColor, [self.rayon,self.rayon], self.rayon)
+					self.mask = pygame.mask.from_surface(self.surface)
+					dictBallesMortes[self.id] = self
+					NbI -= 1
+					NbM += 1
+					return self.id
+				else:
+					self.surface = pygame.Surface((self.rayon*2, self.rayon*2),pygame.SRCALPHA)
+					pygame.draw.circle(self.surface, greyColor, [self.rayon,self.rayon], self.rayon)
+					self.mask = pygame.mask.from_surface(self.surface)
+					self.invincible = True
+					NbI -= 1
+					NbR += 1
 		return False
 
 	# affichage 
@@ -240,22 +274,31 @@ for k in range(1,NombreDIndividus+1):
 	y = random.random()*(resolutionEcran[1]-60)+30
 	vitesse = 1
 	angle = 2*math.pi*random.random()
-	if NombreMaladeInit > 0:
-		NombreMaladeInit -= 1
+	if NombreMaladeInit_I > 0:
+		NombreMaladeInit_I -= 1
 		dateFinInfection = random.randint(dureeInfectionMin,dureeInfectionMax)
 		vaMourir = False
 		if random.random() < TauxMortalite:
 			vaMourir = True
-		balle = Balle(x, y, idballe=k, dateFinInfection = dateFinInfection ,vaMourir= vaMourir, masse = 1, rayon = 8, couleur = redColor, vitesse=vitesse, angle=angle)
+		balle = Balle(x, y, idballe=k, dateFinInfection = dateFinInfection, dateFinIncubation=-1, vaMourir= vaMourir, masse = 1, rayon = 8, couleur = redColor, vitesse=vitesse, angle=angle)
 		balle.sain = False
 		balle.contagieux = True
+	elif NombreMaladeInit_E > 0:
+		NombreMaladeInit_E -= 1
+		dateFinIncubation = random.randint(dureeIncubationMin,dureeIncubationMax)
+		dateFinInfection = random.randint(dureeInfectionMin,dureeInfectionMax)
+		vaMourir = False
+		if random.random() < TauxMortalite:
+			vaMourir = True
+		balle = Balle(x, y, idballe=k, dateFinInfection = dateFinInfection, dateFinIncubation = dateFinIncubation, vaMourir= vaMourir, masse = 1, rayon = 8, couleur = orangeColor, vitesse=vitesse, angle=angle)
+		balle.sain = False
+		balle.contagieux = False
 	else:
 		balle = Balle(x, y, idballe=k, masse = 1, rayon = 8, vitesse=vitesse, angle=angle)
 
 contour = Bordure()
 
 windowSurface = pygame.display.set_mode(resolutionEcran, pygame.RESIZABLE)
-
 
 
 running = True
@@ -276,9 +319,13 @@ while running:
             	end = True
             	affiche = True
 
+    # condition vaccination
+    if (NbE + NbI) > NombreDIndividus*0.4 and not vacc:
+    	vacc = True
+    	tVacc = t
 
     if start and not end:
-    	listeGeneral.append([t, NbS, NbI, NbR, NbM])
+    	listeGeneral.append([t, NbS, NbE, NbI, NbR, NbM])
     	t += 1
     	listeIdMort = []
     	for idb in dictBalles:
@@ -309,11 +356,26 @@ while running:
 
     if affiche:
     	affiche = False
+
+    	SumR = 0
+    	SumCumuleInfecte = 0
+    	for idb in dictBalles:
+    		b = dictBalles[idb]
+    		SumR += b.scoreInfection
+    	for idb in dictBallesMortes:
+    		b = dictBallesMortes[idb]
+    		SumR += b.scoreInfection
+    	R_moy = SumR / NombreDIndividus
+    	print(f"Le R moyen vaut : {R_moy}")
+
     	listeGeneral = np.array(listeGeneral)
     	plt.figure()
-    	plt.plot(listeGeneral[:,0],listeGeneral[:,1],label="sain")
-    	plt.plot(listeGeneral[:,0],listeGeneral[:,2],label="infecté")
-    	plt.plot(listeGeneral[:,0],listeGeneral[:,3],label="retablie")
-    	plt.plot(listeGeneral[:,0],listeGeneral[:,4],label="mort")
+    	plt.plot(listeGeneral[:,0],listeGeneral[:,1],c="g",label="sain")
+    	plt.plot(listeGeneral[:,0],listeGeneral[:,2],c="orange",label="exposé")
+    	plt.plot(listeGeneral[:,0],listeGeneral[:,3],c="r",label="infecté")
+    	plt.plot(listeGeneral[:,0],listeGeneral[:,4],c="grey",label="retabli")
+    	plt.plot(listeGeneral[:,0],listeGeneral[:,5],c="black",label="mort")
+    	if vacc:
+    		plt.vlines(tVacc, ymin=0, ymax=NombreDIndividus, colors="b", linestyle="dashed")
     	plt.legend()
     	plt.savefig("evolution.png")
