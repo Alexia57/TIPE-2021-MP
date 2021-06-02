@@ -32,8 +32,8 @@ dureeInfectionMin = 600
 dureeInfectionMax = 1000
 dureeIncubationMin = 100
 dureeIncubationMax = 200
-ProbaInfectionContact = 0.2
-TauxMortalite = 0.1
+ProbaInfectionContact = 0.1
+TauxMortalite = 0.09
 
 vacc = False
 TauxVacc = 0.0005
@@ -375,7 +375,10 @@ while running:
     	plt.plot(listeGeneral[:,0],listeGeneral[:,3],c="r",label="infecté")
     	plt.plot(listeGeneral[:,0],listeGeneral[:,4],c="grey",label="retabli")
     	plt.plot(listeGeneral[:,0],listeGeneral[:,5],c="black",label="mort")
+	plt.title("Evolution de la population au cours du temps")
+	plt.xlabel('Temps')
+	plt.ylabel('Population')
     	if vacc:
-    		plt.vlines(tVacc, ymin=0, ymax=NombreDIndividus, colors="b", linestyle="dashed")
+    		plt.vlines(tVacc, ymin=0, ymax=NombreDIndividus, colors="b", linestyle="dashed",label='vaccination')
     	plt.legend()
     	plt.savefig("evolution.png")
