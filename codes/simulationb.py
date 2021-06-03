@@ -15,8 +15,8 @@ resolutionEcran = (600,600)
 FPS = 60
 greenColor = (50,210,50)
 redColor = (200,10,10)
-greyColor = (100,100,100)
-whiteColor = (230,230,230)
+greyColor = (150,150,150)
+whiteColor = (255,255,255)
 blackColor = (0, 0, 0)
 blueColor = (80, 150, 255)
 orangeColor =(255,90,10)
@@ -32,11 +32,11 @@ dureeInfectionMin = 600
 dureeInfectionMax = 1000
 dureeIncubationMin = 100
 dureeIncubationMax = 200
-ProbaInfectionContact = 0.1
+ProbaInfectionContact = 0.2
 TauxMortalite = 0.09
-
+AvecousansE=False
 vacc = False
-TauxVacc = 0.0005
+TauxVacc = 0
 
 NbCumuleInfecte = 0
 
@@ -50,6 +50,10 @@ listeGeneral = []
 
 dictBalles = {}
 dictBallesMortes = {}
+
+if not AvecousansE:
+    dureeIncubationMin = 0
+    dureeIncubationMax = 0
 
 # fonction qui retourne la somme de 2 vecteurs
 def sommeVect(angle1, taille1, angle2, taille2):
@@ -206,7 +210,6 @@ class Balle(pygame.sprite.Sprite):
 					self.sain = False
 		## maladie
 		if not self.sain and not self.invincible: # on incremente de temps passé malade
-			self.dureeInfection += 1
 			# on regarde si la balle est à la fin de l'incubation / maladie
 			if self.dureeInfection == self.dateFinIncubation:
 				NbE-=1
@@ -234,6 +237,7 @@ class Balle(pygame.sprite.Sprite):
 					self.invincible = True
 					NbI -= 1
 					NbR += 1
+			self.dureeInfection += 1
 		return False
 
 	# affichage 
@@ -370,15 +374,16 @@ while running:
 
     	listeGeneral = np.array(listeGeneral)
     	plt.figure()
-    	plt.plot(listeGeneral[:,0],listeGeneral[:,1],c="g",label="sain")
-    	plt.plot(listeGeneral[:,0],listeGeneral[:,2],c="orange",label="exposé")
+    	plt.plot(listeGeneral[:,0],listeGeneral[:,1],c="g",label="susceptible")
+    	if AvecousansE:
+            plt.plot(listeGeneral[:,0],listeGeneral[:,2],c="orange",label="exposé")
     	plt.plot(listeGeneral[:,0],listeGeneral[:,3],c="r",label="infecté")
     	plt.plot(listeGeneral[:,0],listeGeneral[:,4],c="grey",label="retabli")
     	plt.plot(listeGeneral[:,0],listeGeneral[:,5],c="black",label="mort")
-	plt.title("Evolution de la population au cours du temps")
-	plt.xlabel('Temps')
-	plt.ylabel('Population')
-    	if vacc:
-    		plt.vlines(tVacc, ymin=0, ymax=NombreDIndividus, colors="b", linestyle="dashed",label='vaccination')
+    	plt.title("Evolution de la population au cours du temps")
+    	plt.xlabel('Temps')
+    	plt.ylabel('Population')
+    	if vacc and TauxVacc !=0:
+    		plt.vlines(tVacc, ymin=0, ymax=NombreDIndividus, colors="b", linestyle="dashed")
     	plt.legend()
     	plt.savefig("evolution.png")

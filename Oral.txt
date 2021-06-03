@@ -1,69 +1,9 @@
-https://maths.ac-creteil.fr/IMG/pdf/5_modele_sir.pdf 
-Dans un premier temps, un modèle sert à représenter la réalité sous un format simplifié pour comprendre les principaux mécanismes en jeu.
-Les modèles peuvent être complexifiés pour mieux représenter la réalité en introduisant par exemple plusieurs catégories de personnes sensibles 
-suivant l’âge, différents symptômes, des populations ayant des comportements différents, ou une dimension spatiale. 
-1 Qu’est ce qu’un modèle ?
-Pour étudier une situation réelle telle que l'évolutiton d'une épidémie, on commence par extraire de la situation ses caractéristiques principales. Les hypothèses et simplifications faites permettent
-alors de décrire la situation mathématiquement : on a créé un modèle. Ensuite on utilise des techniques mathématiques connues pour analyser, étudier le modèle. Les conclusions obtenues sont ensuite retraduites
-dans le langage du monde réel. Par confrontation à l’expérience et au réel les modèles peuvent être affinés.
-(L'objectif est de mieux comprendre le phénomène et pouvoir agir dans le futur si on se retrouve dans une situation similaire où le modèle semble pouvoir être appliqué.) 
-
-2 Sommaire
-
-3 Le modèle « S.I.R. » développé par Kernack et McKendrick en 1927
-Hypothèses:
-* La maladie est une maladie assez brève : on néglige les phénomènes démographiques (naissances, décès, immigration). La taille de la population étudiée peut donc être considérée comme fixe.
-* La seule façon pour qu’un individu quitte le groupe des sains est en devenant infecté. Il est raisonnable de penser que le nombre de nouveaux cas sur une durée donnée est proportionnel au nombre de contacts sur
-cette durée entre les individus susceptibles et les individus infectés (S(t) × I(t)). On note ce coefficient de proportionnalité β.
-* Les personnes malades (infectés) sont toutes infectieuses : elles peuvent transmettre la maladie.
-* Chaque personne qui a guéri de cette maladie est immunisée pour toujours contre cette maladie : la personne ne peut plus retomber malade.
-* Toutes les personnes tombées malades finissent par guérir (ou mourir) mais on ne fera pas la différence ici : dans les deux cas les individus ne peuvent plus
-retomber malade). Ainsi qu’une proportion γ des individus infectés passe dans le groupe des individus
-rétablis tous les jours. Par exemple si la durée moyenne d’infection est de λ = 10 jours, en moyenne chaque
-jour γ = 1/10 de la population infectée se rétablit (ou meurt). 
-
-Vocabulaire :
-- β est appelé taux de transmission
-- λ est la durée moyenne d’infection
-- γ est appelé taux de guérison, il est égal à l’inverse de λ 
-
-4 Vaccination
-
-5 SEIR
-On prend en compte le délais d'incubation de la maladie. Avant de devenir des personnes infectieuses, 
-les infectés sont d'abord considérés comme des personnes exposées, c'est-à-dire infectées mais non infectieuses.
-
-6 Ajout variation de la population totale
-On peut affiner le modèle en prenant en compte une multitude de paramètre comme les taux de natalité et de mortalité de la population. 
-La population totale N n'est donc plus constante et dépend du temps.
-
-7 Modèles SIS et SEIRS. Au bout d'un certain temps, les personnes infectées redeviennent susceptibles.
-
-8 Le taux de reproduction
-Le taux de reproduction de base R0 est le nombre de personnes qu’une personne infectée va contaminer pendant la durée de la contagiosité. 
-Il correspond au taux de reproduction au début de l’épidémie. 
-On parle ensuite de Reffectif.
-
-Les estimations du R sont souvent calculées en fonction de 3 paramètres principaux
-    • la durée de contagiosité après qu’une personne soit infectée
-    • la probabilité d’infection par contact entre une personne sensible et une personne ou un agent infectieux
-    • le taux de contact – avec des paramètres supplémentaires qui peuvent être ajoutés pour décrire des cycles de transmission plus complexes
-Avec le modèle SIR, le R correspond du produit du taux de transmission β et de la durée moyenne d’infection λ = 1/gamma
-
-R < 1 → l’épidémie régresse
-1 < R < 1,5 → l’épidémie progresse
-R > 1,5 → seuil d’alerte épidémiologique déclenché
-
-Comment atténuer l’intensité d’une épidémie ?
-R = β × λ donc R diminue lorsque β diminue et/ou lorsque λ diminue.
-Comment diminuer la probabilité d’infection β ?
--> Par exemple en mettant en place des mesures d’hygiène (lavage régulier des mains…) ou de limitation de
-contacts entre les individus (fermetures d’écoles…)
-Comment diminuer le temps moyen d’infection λ ?
--> C’est possible par exemple si on a un traitement qui va faire guérir l’individu infecté plus rapidement.
-
-9 La vaccination & l’ « immunité de groupe »
-
-D’autres modèles ?   
-
-Pour la COVID-19, la transmission se fait dans la population et potentiellement par des personnes asymptomatiques. Il sera donc beaucoup plus difficile de contenir l’épidémie de COVID-19.
+Exploitations des résultats:
+– lorsque l’épidémie débute, le nombre des personnes infectées (I – en vert) augmente
+rapidement : en effet, le virus trouve très facilement des hôtes à infecter dans une population
+très majoritairement saine ;
+– mais, puisque la population susceptible d’être infectée décroît et que la population qui ne peut
+plus l’être s’accroît, la dynamique de l’infection s’affaiblit progressivement ; au bout d’un
+temps suffisamment long, quand il y a un très grand nombre de personnes guéries (R) et très
+peu de personnes susceptibles (S), le nombre de personnes infectées (I) ne peut être que faible
+lui aussi, et décroître.
