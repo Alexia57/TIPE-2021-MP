@@ -16,18 +16,18 @@ import numpy as np
 # R'= γI
 
 # Euler explicite :
-T = 10 # temps final
+T = 50 # temps final
 k = 8
 h = T/(2**k)
 t = np.linspace(0,T,2**k+1)
 
-β=0.005
-γ=0.06
-α=0
+β=0.0008
+γ=1/10
+α=0.05
 
 
-S0 = 500
-I0 = 1
+S0 = 1000
+I0 = 10
 R0 = 0
 N0 = S0+I0+R0
 Y = [[S0,I0,R0,N0]]
@@ -51,7 +51,7 @@ plt.plot(t,S,label="Susceptibles")
 plt.plot(t,I,label="Infectés")
 plt.plot(t,R,label="Retirés")
 plt.plot(t,N,label="Population")
-plt.xlabel("Temps en années")
+plt.xlabel("Temps")
 plt.ylabel("nombre d'individus")
 plt.title("Solution du modèle SIR avec vaccination")
 plt.legend()
