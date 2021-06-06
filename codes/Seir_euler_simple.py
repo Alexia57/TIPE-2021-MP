@@ -16,14 +16,14 @@ import numpy as np
 # R'= γI
 
 # Euler explicite :
-T = 10 # temps final
+T = 50 # temps final
 k = 8
 h = T/(2**k)
 t = np.linspace(0,T,2**k+1)
 
-β=0.08
-γ=0.06
-α=0.75
+β=0.008
+γ=1/10
+α=0.60
 
 
 S0 = 500
@@ -50,11 +50,11 @@ I = YEulerExpl[:,2]
 R = YEulerExpl[:,3]
 N = YEulerExpl[:,4]
 plt.figure(0)
-plt.plot(t,S,label="Susceptibles")
-plt.plot(t,E,label="Exposés")
-plt.plot(t,I,label="Infectés")
-plt.plot(t,R,label="Retirés")
-plt.plot(t,N,label="Population")
+plt.plot(t,S,'c',label="Susceptibles")
+plt.plot(t,E,'m',label="Exposés")
+plt.plot(t,I,'orange',label="Infectés")
+plt.plot(t,R,'g',label="Retirés")
+plt.plot(t,N,'r',label="Population")
 plt.xlabel("Temps en années")
 plt.ylabel("nombre d'individus")
 plt.title("Solution du modèle SEIR")
