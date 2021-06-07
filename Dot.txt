@@ -1,6 +1,0 @@
-[Septembre : choix du sujet]
-[Octobre : recherche sur le les modèles épidémiologiques SIR, SEIR. Début de programmation.]
-[Novembre : choix de la meilleure méthode de programmation entre euler explicite, euler explicite implicite et Runge Kutta. Au final, le choix se fait sur Runge Kutta.]
-[Février-Mars : difficultés pour trouver comment calculer le nombre de reproduction du virus ; cela conduit à de nombreuses recherches documentaires]
-* Imagination de la simulation, reflexion du pb et comment le coder
-* 
